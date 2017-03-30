@@ -1,6 +1,9 @@
 package mock.mockito.impl;
 
+import com.google.common.collect.Maps;
 import org.mockito.cglib.proxy.Enhancer;
+
+import java.util.Map;
 
 public class MyMockito {
     private static MockInterceptor interceptor = new MockInterceptor();
@@ -9,10 +12,21 @@ public class MyMockito {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(clazz);
         enhancer.setCallback(interceptor);
-        return (T) enhancer.create();
+        T obj = (T) enhancer.create();
+        return obj;
     }
 
-    public static MockInterceptor.When when(Object object) {
-        return new MockInterceptor.When(interceptor);
+    public static <T> T spy(Class<T> clazz) {
+        T obj = mock(clazz);
+        interceptor.callRealMethodsOnMissing(obj);
+        return obj;
+    }
+
+    public static CallRealMethodWhen doCallRealMethod() {
+        return new CallRealMethodWhen(interceptor);
+    }
+
+    public static When when(Object object) {
+        return new When(interceptor);
     }
 }

@@ -7,18 +7,36 @@ import org.junit.Test;
 
 public class MyMockitoDemo {
 
-    private Person person;
+    private Person mock;
+    private Person spy;
 
     @Before
     public void setUp() {
-        person = MyMockito.mock(Person.class);
+        mock = MyMockito.mock(Person.class);
+        spy = MyMockito.spy(Person.class);
     }
 
     @Test
-    public void testWhen() {
-        person.printName();
-        MyMockito.when(person.getName()).thenReturn("My Mockito test");
-        System.out.println(person.getName());
-        person.printName();
+    public void testSpy() {
+        spy.printName();
+        MyMockito.when(spy.getName()).thenReturn("Test Spy");
+        spy.printName();
+    }
+
+    @Test
+    public void testMock() {
+        MyMockito.when(mock.getName()).thenReturn("No Output");
+        mock.printName();
+        MyMockito.when(mock.getName()).thenReturn("Test Mock");
+        mock.printName();
+        MyMockito.when("Whatever points to the last call").thenCallRealMethod();
+        mock.printName();
+    }
+
+    @Test
+    public void testDoCallRealMethod() {
+        MyMockito.when(mock.getName()).thenReturn("Call Real PrintName Method");
+        MyMockito.doCallRealMethod().when(mock).printName();
+        mock.printName();
     }
 }
